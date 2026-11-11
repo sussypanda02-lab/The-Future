@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Future</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0b0f2a;--ink:#eef0ff;--mute:#9aa0d0;--violet:#7c5cff;--cyan:#4de1ff;--pink:#ff5fa2;--card:rgba(255,255,255,.06);--line:rgba(255,255,255,.14)}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Space Grotesk',system-ui,sans-serif;overflow-x:hidden}
+  .grid-bg{position:fixed;inset:0;z-index:-1;background:
+    radial-gradient(60% 50% at 50% 0%,rgba(124,92,255,.35),transparent 70%),
+    linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px) 0 0/48px 48px,
+    linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px) 0 0/48px 48px}
+  .glass{background:var(--card);border:1px solid var(--line);backdrop-filter:blur(14px);border-radius:20px}
+  .btn{background:linear-gradient(135deg,var(--violet),var(--cyan));color:#06081c;font-weight:700;border-radius:999px;padding:.9rem 2.2rem;transition:transform .15s,box-shadow .2s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 40px -8px var(--cyan)}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+  .ghost{border:1px solid var(--line);border-radius:999px;padding:.7rem 1.4rem;color:var(--mute)}
+  .ghost:hover{color:var(--ink);border-color:var(--cyan)}
+  .field{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:14px;padding:.9rem 1rem;color:var(--ink);outline:none}
+  .field:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(77,225,255,.2)}
+  .chip{border:1px solid var(--line);border-radius:999px;padding:.55rem 1.1rem;cursor:pointer;transition:.15s}
+  .chip:hover{border-color:var(--cyan)}
+  .chip.on{background:linear-gradient(135deg,var(--violet),var(--pink));border-color:transparent;font-weight:700}
+  .fade{animation:fade .5s ease both}
+  @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .swap{transition:opacity .35s,transform .35s}
+  .swap.out{opacity:0;transform:translateY(-10px)}
+  /* toggle */
+  .tgl{width:64px;height:34px;border-radius:999px;background:rgba(255,255,255,.15);position:relative;transition:.2s;flex:none}
+  .tgl::after{content:"";position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:#fff;transition:.2s}
+  .tgl.on{background:linear-gradient(135deg,var(--violet),var(--cyan))}
+  .tgl.on::after{left:34px}
+  /* build loader */
+  .ring{width:120px;height:120px;border-radius:50%;border:4px solid transparent;border-top-color:var(--cyan);border-right-color:var(--pink);animation:spin 1s linear infinite;position:relative}
+  .ring::after{content:"";position:absolute;inset:14px;border-radius:50%;border:4px solid transparent;border-bottom-color:var(--violet);border-left-color:var(--cyan);animation:spin 1.6s linear infinite reverse}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  /* avatar orb */
+  .orb-wrap{width:150px;height:150px;display:grid;place-items:center}
+  .orb{width:120px;height:120px;border-radius:50%;display:grid;place-items:center;font-size:56px;
+    background:radial-gradient(circle at 30% 28%,#fff8,transparent 35%),radial-gradient(circle,var(--violet),#2a1b7a);
+    box-shadow:0 0 50px -4px var(--violet),inset 0 -10px 30px rgba(0,0,0,.35)}
+  .anim-float .orb{animation:float 3s ease-in-out infinite}
+  .anim-dance .orb{animation:dance .8s ease-in-out infinite}
+  .anim-wobble .orb{animation:wobble 1.4s ease-in-out infinite}
+  .anim-bounce .orb{animation:bounce .7s cubic-bezier(.3,0,.4,1) infinite}
+  .anim-spin .orb{animation:spin 2s linear infinite}
+  .thinking .orb{box-shadow:0 0 80px 6px var(--cyan),inset 0 -10px 30px rgba(0,0,0,.35)}
+  @keyframes float{50%{transform:translateY(-12px)}}
+  @keyframes dance{0%,100%{transform:rotate(-12deg) translateX(-8px)}50%{transform:rotate(12deg) translateX(8px) scale(1.06)}}
+  @keyframes wobble{0%,100%{transform:rotate(0)}20%{transform:rotate(14deg) translateX(10px)}50%{transform:rotate(-16deg) translateX(-12px)}75%{transform:rotate(8deg)}}
+  @keyframes bounce{0%,100%{transform:translateY(0) scaleY(.92)}50%{transform:translateY(-30px) scaleY(1.05)}}
+  .msg{max-width:85%;padding:.7rem 1rem;border-radius:18px;white-space:pre-wrap;line-height:1.45}
+  .msg.me{margin-left:auto;background:linear-gradient(135deg,var(--violet),#5b8cff);border-bottom-right-radius:4px}
+  .msg.ai{background:rgba(255,255,255,.09);border:1px solid var(--line);border-bottom-left-radius:4px}
+  .msg em{color:var(--cyan)}
+  .dots span{display:inline-block;width:7px;height:7px;margin:0 2px;border-radius:50%;background:var(--mute);animation:bounce .9s infinite}
+  .dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
+  .bar{height:4px;border-radius:4px;background:rgba(255,255,255,.12)}
+  .bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--violet),var(--cyan));transition:width .4s}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition-duration:.01s!important}}
+
+  /* body avatar */
+  #chsvg{overflow:visible}
+  .ch{transform-origin:100px 270px}.la{transform-origin:74px 110px}.ra{transform-origin:126px 110px}
+  .ll{transform-origin:88px 172px}.rl{transform-origin:112px 172px}.hd{transform-origin:100px 98px}
+  .thinking #chsvg{filter:drop-shadow(0 0 18px var(--cyan))}
+  .a-idle .ch{animation:bob 2.4s ease-in-out infinite}.a-idle .la{animation:sw 2.4s ease-in-out infinite}.a-idle .ra{animation:sw 2.4s ease-in-out infinite reverse}
+  @keyframes bob{50%{transform:translateY(-5px)}}@keyframes sw{50%{transform:rotate(7deg)}}
+  .a-wave .ra{animation:wv .55s ease-in-out infinite}@keyframes wv{0%,100%{transform:rotate(-135deg)}50%{transform:rotate(-105deg)}}
+  .a-dance .ch{animation:dsw .6s ease-in-out infinite}.a-dance .la{animation:dl .6s ease-in-out infinite}.a-dance .ra{animation:dr .6s ease-in-out infinite}
+  .a-dance .ll{animation:kl .6s ease-in-out infinite}.a-dance .rl{animation:kr .6s ease-in-out infinite}
+  @keyframes dsw{0%,100%{transform:rotate(-6deg) translateX(-7px)}50%{transform:rotate(6deg) translateX(7px)}}
+  @keyframes dl{0%,100%{transform:rotate(130deg)}50%{transform:rotate(20deg)}}@keyframes dr{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(-130deg)}}
+  @keyframes kl{50%{transform:rotate(22deg)}}@keyframes kr{0%,100%{transform:rotate(-22deg)}}
+  .a-robot .la{animation:rl1 1.2s steps(1) infinite}.a-robot .ra{animation:rr1 1.2s steps(1) infinite}.a-robot .hd{animation:rh 1.2s steps(1) infinite}.a-robot .ch{animation:rx 1.2s steps(1) infinite}
+  @keyframes rl1{0%{transform:rotate(100deg)}33%{transform:rotate(135deg)}66%{transform:rotate(45deg)}}
+  @keyframes rr1{0%{transform:rotate(-100deg)}33%{transform:rotate(-45deg)}66%{transform:rotate(-135deg)}}
+  @keyframes rh{0%{transform:rotate(0)}25%{transform:rotate(-14deg)}50%{transform:rotate(0)}75%{transform:rotate(14deg)}}
+  @keyframes rx{0%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(0)}75%{transform:translateX(8px)}}
+  .a-jump .ch,.a-cheer .ch{animation:jp .7s cubic-bezier(.3,0,.5,1) infinite}.a-cheer .ch{animation-duration:.5s}
+  @keyframes jp{0%,100%{transform:translateY(0) scaleY(.9) scaleX(1.06)}50%{transform:translateY(-38px) scaleY(1.04)}}
+  .a-jump .la{transform:rotate(150deg)}.a-jump .ra{transform:rotate(-150deg)}
+  .a-cheer .la{animation:cl .35s ease-in-out infinite}.a-cheer .ra{animation:cr .35s ease-in-out infinite}
+  @keyframes cl{0%,100%{transform:rotate(140deg)}50%{transform:rotate(110deg)}}@keyframes cr{0%,100%{transform:rotate(-140deg)}50%{transform:rotate(-110deg)}}
+  .a-spin .ch{animation:sp 1s linear infinite;transform-origin:100px 140px}.a-spin .la{transform:rotate(48deg)}.a-spin .ra{transform:rotate(-48deg)}
+  @keyframes sp{0%{transform:scaleX(1)}25%{transform:scaleX(0)}50%{transform:scaleX(-1)}75%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+  .a-drunk .ch{animation:dk 2s ease-in-out infinite}.a-drunk .hd{animation:ll 1.3s ease-in-out infinite}.a-drunk .la{animation:fl .9s ease-in-out infinite}.a-drunk .ra{animation:fl .9s ease-in-out infinite reverse}
+  @keyframes dk{0%,100%{transform:rotate(0)}20%{transform:rotate(14deg) translateX(14px)}45%{transform:rotate(-16deg) translateX(-16px)}70%{transform:rotate(10deg) translateX(8px)}}
+  @keyframes ll{0%,100%{transform:rotate(-22deg)}50%{transform:rotate(22deg)}}@keyframes fl{0%,100%{transform:rotate(35deg)}50%{transform:rotate(-25deg)}}
+  .a-clap .la{animation:cpl .4s ease-in-out infinite}.a-clap .ra{animation:cpr .4s ease-in-out infinite}.a-clap .ch{animation:bob 1s infinite}
+  @keyframes cpl{0%,100%{transform:rotate(-20deg)}50%{transform:rotate(-62deg)}}@keyframes cpr{0%,100%{transform:rotate(20deg)}50%{transform:rotate(62deg)}}
+  .a-run .ch{animation:rb .3s ease-in-out infinite}.a-run .ll,.a-run .ra{animation:rn .3s ease-in-out infinite}.a-run .rl,.a-run .la{animation:rn .3s ease-in-out infinite reverse}
+  @keyframes rb{0%,100%{transform:rotate(5deg)}50%{transform:rotate(5deg) translateY(-6px)}}@keyframes rn{0%,100%{transform:rotate(-38deg)}50%{transform:rotate(38deg)}}
+  .a-sleep .ch{animation:bob 3.5s ease-in-out infinite}.a-sleep .hd{animation:nod 2.6s ease-in-out infinite}
+  @keyframes nod{0%,100%{transform:rotate(0)}50%{transform:rotate(20deg)}}
+  .a-poop .ch{animation:sq 1.2s ease-in-out infinite}@keyframes sq{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.78)}}
+  .a-love .ch{animation:bob 1.4s ease-in-out infinite}.a-love .hd{animation:nod 1.6s ease-in-out infinite reverse}.a-love .ra{animation:wv .8s ease-in-out infinite}
+  .fxe{position:absolute;top:8%;font-size:22px;animation:fxup 1.6s ease-out forwards}.fxe.dn{top:62%;animation-name:fxdn}
+  @keyframes fxup{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-44px)}}
+  @keyframes fxdn{from{opacity:0;transform:translateY(-12px)}20%{opacity:1}to{opacity:1;transform:translateY(46px)}}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<main class="min-h-full flex flex-col items-center px-4 py-8 max-w-3xl mx-auto">
+  <h1 id="headline" class="swap text-4xl sm:text-6xl font-bold tracking-tight text-center mt-4 mb-8">The Future is here!</h1>
+  <div id="stage" class="w-full flex-1 flex flex-col items-center"></div>
+</main>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const store = {
+  get(k, d = '') { try { return localStorage.getItem(k) ?? d } catch { return d } },
+  set(k, v) { try { localStorage.setItem(k, v) } catch {} }
+};
+/* ===== CONFIG: put your OpenRouter key and model here. Users never see or enter a key. ===== */
+const OPENROUTER_API_KEY = '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';
+// Backup list, only used if the live model list can't be fetched. The app normally asks OpenRouter for current free models.
+const MODELS = ['openrouter/free', 'openai/gpt-oss-20b:free', 'google/gemma-3-27b-it:free', 'qwen/qwen3-235b-a22b:free'];
+const MAX_TOKENS = 500; // cap per reply (extra room for models that think before answering)
+
+const state = {
+  step: 0, name: '', personality: '', custom: '', animations: true, actions: '',
+  apiKey: OPENROUTER_API_KEY, model: MODELS[0],
+  history: []
+};
+const PERSONALITIES = ['Sarcastic', 'Sweet', 'Chaotic', 'Professional', 'Energetic', 'Mysterious'];
+const FACES = { Sarcastic: '😏', Sweet: '🥰', Chaotic: '🤪', Professional: '🧐', Energetic: '🤩', Mysterious: '🌙' };
+const stage = $('#stage');
+const esc = s => s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const persona = () => state.custom.trim() || state.personality;
+
+function setHeadline(t) {
+  const h = $('#headline');
+  h.classList.add('out');
+  setTimeout(() => { h.textContent = t; h.classList.remove('out'); }, 350);
+}
+
+/* ---------- Welcome ---------- */
+function welcome() {
+  stage.innerHTML = `
+    <div class="fade flex flex-col items-center gap-8 mt-6 text-center">
+      <div class="orb-wrap anim-float"><div class="orb">✨</div></div>
+      <p class="text-lg max-w-md" style="color:var(--mute)">Design a companion with its own name, attitude and moves. Then talk to it.</p>
+      <button id="go" class="btn text-xl">Let Go!</button>
+    </div>`;
+  $('#go').onclick = () => {
+    stage.firstElementChild.classList.add('swap', 'out');
+    setHeadline('Hey lets start!');
+    setTimeout(() => { state.step = 1; render(); }, 380);
+  };
+}
+
+/* ---------- Builder ---------- */
+const STEPS = [
+  { q: 'Name your A.I', body: () => `<input id="in" class="field text-xl" maxlength="24" placeholder="e.g. Nova" value="${esc(state.name)}" autofocus>`,
+    ok: () => state.name.trim().length > 0, bind() { $('#in').oninput = e => { state.name = e.target.value; sync(); }; } },
+  { q: 'Pick your personality', body: () => `
+      <div class="flex flex-wrap gap-2">${PERSONALITIES.map(p => `<button class="chip ${!state.custom && state.personality === p ? 'on' : ''}" data-p="${p}">${FACES[p]} ${p}</button>`).join('')}</div>
+      <input id="cust" class="field mt-4" maxlength="40" placeholder="…or type your own (e.g. grumpy pirate)" value="${esc(state.custom)}">`,
+    ok: () => !!persona(),
+    bind() {
+      document.querySelectorAll('[data-p]').forEach(b => b.onclick = () => { state.personality = b.dataset.p; state.custom = ''; render(); });
+      $('#cust').oninput = e => { state.custom = e.target.value; document.querySelectorAll('[data-p]').forEach(b => b.classList.remove('on')); sync(); };
+    } },
+  { q: 'Do you want your character to have animations?', body: () => `
+      <button id="tg" class="flex items-center gap-4 w-full text-left"><span class="tgl ${state.animations ? 'on' : ''}"></span>
+      <span class="text-lg">${state.animations ? 'Yes, make it move' : 'No, keep it still'}</span></button>`,
+    ok: () => true, bind() { $('#tg').onclick = () => { state.animations = !state.animations; render(); }; } },
+  { q: 'What actions do you want?', body: () => `
+      <div class="flex flex-wrap gap-2 mb-4">${QUICK.map(q => `<button class="chip text-sm ${state.actions.toLowerCase().includes(q.toLowerCase()) ? 'on' : ''}" data-q="${q}">${q}</button>`).join('')}</div>
+      <textarea id="act" class="field" rows="4" placeholder="e.g. dancing robotically, drunk preppy poop, spinning when excited">${esc(state.actions)}</textarea>
+      <p class="mt-2 text-sm" style="color:var(--mute)">Tap some, or type your own, separated by commas. The character acts out the ones it recognizes, and the AI will use them in its replies.</p>`,
+    ok: () => state.actions.trim().length > 0, bind() {
+      const ta = $('#act');
+      const refresh = () => document.querySelectorAll('[data-q]').forEach(b => b.classList.toggle('on', state.actions.toLowerCase().includes(b.dataset.q.toLowerCase())));
+      ta.oninput = e => { state.actions = e.target.value; refresh(); sync(); };
+      document.querySelectorAll('[data-q]').forEach(b => b.onclick = () => {
+        const q = b.dataset.q, parts = state.actions.split(',').map(x => x.trim()).filter(Boolean);
+        const has = parts.findIndex(x => x.toLowerCase() === q.toLowerCase());
+        if (has >= 0) parts.splice(has, 1); else parts.push(q);
+        state.actions = parts.join(', '); ta.value = state.actions; refresh(); sync();
+      });
+    } }
+];
+
+function render() {
+  if (state.step === 0) return welcome();
+  if (state.step <= 4) return renderStep();
+  if (state.step === 5) return renderBuild();
+  renderChat();
+}
+
+function renderStep() {
+  const s = STEPS[state.step - 1];
+  stage.innerHTML = `
+    <div class="fade glass w-full p-6 sm:p-8 flex flex-col gap-6">
+      <div class="bar"><i style="width:${(state.step - 1) / 4 * 100 + 12}%"></i></div>
+      <h2 class="text-2xl sm:text-3xl font-bold">${s.q}</h2>
+      <div>${s.body()}</div>
+      <div class="flex justify-between items-center">
+        <button id="back" class="ghost" ${state.step === 1 ? 'style="visibility:hidden"' : ''}>Back</button>
+        <button id="next" class="btn">${state.step === 4 ? 'Build it' : 'Next'}</button>
+      </div>
+    </div>`;
+  s.bind(); sync();
+  const inp = $('#in') || $('#act'); if (inp) inp.focus();
+  $('#back').onclick = () => { state.step--; render(); };
+  $('#next').onclick = () => { state.step++; render(); };
+}
+function sync() { const n = $('#next'); if (n) n.disabled = !STEPS[state.step - 1].ok(); }
+
+/* ---------- Build / confirmation ---------- */
+function renderBuild() {
+  stage.innerHTML = `
+    <div class="fade flex flex-col items-center gap-8 mt-6 text-center w-full">
+      <div class="ring"></div>
+      <h2 class="text-3xl font-bold">Great Choices? Let me build!</h2>
+      <p id="bstat" style="color:var(--mute)">Assembling ${esc(state.name)}…</p>
+    </div>`;
+  const lines = ['Tuning personality…', 'Wiring up the moves…', 'Waking up ' + state.name + '…'];
+  lines.forEach((t, i) => setTimeout(() => { const e = $('#bstat'); if (e) e.textContent = t; }, 900 * (i + 1)));
+  setTimeout(() => { if (state.step === 5) finishBuild(); }, 3000);
+}
+
+async function finishBuild() {
+  $('#bstat').textContent = 'Saying hello…';
+  state.history = [];
+  state.step = 6;
+  renderChat(true);
+}
+
+/* ---------- OpenRouter ---------- */
+function systemPrompt() {
+  return `You are ${state.name.trim()}, a custom AI companion created by the user inside an app called "The Future".
+Personality: ${persona()}. Stay fully in this personality in every reply.
+Signature actions and behaviors: ${state.actions.trim()}. Work these into how you talk and act. Describe physical actions between asterisks, like *spins dramatically*.
+Never say you are an AI language model or break character. Keep replies short and punchy (1-4 sentences) unless asked for more. Plain text only, no markdown headers or lists.`;
+}
+
+let liveFree = null;
+async function loadFreeModels() {
+  if (liveFree) return liveFree;
+  try {
+    const r = await fetch('https://openrouter.ai/api/v1/models');
+    const d = await r.json();
+    const now = Date.now();
+    liveFree = (d.data || [])
+      .filter(m => m.pricing && Number(m.pricing.prompt) === 0 && Number(m.pricing.completion) === 0)
+      .filter(m => (m.architecture?.input_modalities || ['text']).includes('text') && (m.architecture?.output_modalities || ['text']).join() === 'text')
+      .filter(m => !m.expiration_date || new Date(m.expiration_date).getTime() > now)
+      .filter(m => !/embed|moderation|guard/i.test(m.id))
+      .sort((a, b) => (b.created || 0) - (a.created || 0))
+      .map(m => m.id);
+  } catch { liveFree = []; }
+  return liveFree;
+}
+
+async function askAI(userText) {
+  const messages = [{ role: 'system', content: systemPrompt() }, ...state.history];
+  if (userText) messages.push({ role: 'user', content: userText });
+  else messages.push({ role: 'user', content: '(The user just finished creating you. Introduce yourself in character in 1-2 sentences.)' });
+  const live = await loadFreeModels();
+  const order = [...new Set([state.model, ...live, ...MODELS])].slice(0, 8);
+  const errs = [];
+  for (const model of order) {
+    try {
+      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.apiKey, 'X-Title': 'The Future' },
+        body: JSON.stringify({ model, messages, max_tokens: MAX_TOKENS })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const msg = data?.error?.message || ('Request failed (' + res.status + ')');
+        errs.push(model + ': ' + msg);
+        if (res.status === 401) break;
+        continue;
+      }
+      const text = data.choices?.[0]?.message?.content?.trim();
+      if (!text) { errs.push(model + ': empty reply'); continue; }
+      state.model = model;
+      return text;
+    } catch (e) { errs.push(model + ': ' + e.message); }
+  }
+  console.warn('All models failed:', errs);
+  throw new Error('No free model answered (' + errs.length + ' tried). Last error: ' + (errs[errs.length - 1] || 'unknown'));
+}
+
+
+/* ---------- Actions + body avatar ---------- */
+const ACT_RX = { wave: /wave|hello|greet/, dance: /danc|groove|boogie|twerk/, robot: /robot|glitch|mechanic/, jump: /jump|hop|bounce|leap/,
+  spin: /spin|twirl|whirl|pirouette/, drunk: /drunk|wobbl|stumbl|dizzy|tipsy|trip/, clap: /clap|applaud/, run: /\brun|sprint|dash|zoom/,
+  sleep: /sleep|nap|yawn|snooze/, cheer: /cheer|celebrat|hooray|party/, poop: /poop|crap|squat/, love: /love|heart|blush|kiss/ };
+const ACT_LABEL = { wave: 'Wave', dance: 'Dance', robot: 'Robot', jump: 'Jump', spin: 'Spin', drunk: 'Wobble', clap: 'Clap', run: 'Run', sleep: 'Nap', cheer: 'Cheer', poop: 'Poop', love: 'Kiss' };
+const QUICK = ['Waving', 'Dancing', 'Robot dance', 'Jumping', 'Spinning', 'Drunk wobble', 'Clapping', 'Running', 'Napping', 'Cheering', 'Pooping', 'Blowing kisses'];
+const FX = { poop: '💩', sleep: '💤', dance: '🎵', cheer: '🎉', love: '❤️', run: '💨', spin: '✨', drunk: '🥴', robot: '⚙️' };
+const detectActs = t => { t = t.toLowerCase(); return Object.keys(ACT_RX).filter(k => ACT_RX[k].test(t)); };
+let avTimer, boostT, fxT;
+
+function bodyAvatar(face) {
+  const L = (x1, y1, x2, y2, c, w) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+  return `<div id="av" class="relative shrink-0" style="width:120px;height:172px"><svg id="chsvg" class="a-idle" viewBox="0 0 200 286" width="120" height="172" aria-hidden="true">
+  <defs><linearGradient id="gb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#2a1b7a"/></linearGradient></defs>
+  <ellipse cx="100" cy="272" rx="46" ry="7" fill="rgba(0,0,0,.35)"/>
+  <g class="ch">
+    <g class="ll">${L(88, 172, 82, 250, '#6b52e0', 16)}<ellipse cx="76" cy="262" rx="16" ry="8" fill="#4de1ff"/></g>
+    <g class="rl">${L(112, 172, 118, 250, '#6b52e0', 16)}<ellipse cx="124" cy="262" rx="16" ry="8" fill="#4de1ff"/></g>
+    <g class="la">${L(74, 110, 38, 152, '#8f7bff', 14)}<circle cx="33" cy="158" r="11" fill="#fff"/></g>
+    <g class="ra">${L(126, 110, 162, 152, '#8f7bff', 14)}<circle cx="167" cy="158" r="11" fill="#fff"/></g>
+    <rect x="68" y="92" width="64" height="88" rx="28" fill="url(#gb)"/><circle cx="100" cy="136" r="9" fill="#4de1ff" opacity=".9"/>
+    <g class="hd"><circle cx="100" cy="56" r="42" fill="url(#gb)" stroke="#a99bff" stroke-width="2"/><text x="100" y="72" font-size="50" text-anchor="middle">${face}</text></g>
+  </g></svg><div id="fx" class="absolute inset-0 pointer-events-none"></div></div>`;
+}
+function setAct(n) {
+  const sv = $('#chsvg'); if (!sv) return;
+  sv.setAttribute('class', 'a-' + n);
+  clearInterval(fxT); const f = $('#fx'); if (f) f.innerHTML = '';
+  if (FX[n]) {
+    const pop = () => { const e = $('#fx'); if (!e) return; const sp = document.createElement('span');
+      sp.textContent = FX[n]; sp.className = 'fxe' + (n === 'poop' ? ' dn' : ''); sp.style.left = (20 + Math.random() * 60) + '%';
+      e.appendChild(sp); setTimeout(() => sp.remove(), 1600); };
+    pop(); fxT = setInterval(pop, 800);
+  }
+}
+function stopAvatar() { clearInterval(avTimer); clearTimeout(boostT); clearInterval(fxT); }
+function startAvatar() {
+  stopAvatar(); const acts = detectActs(state.actions); let i = 0;
+  const next = () => setAct(acts.length ? acts[i++ % acts.length] : 'idle');
+  next(); if (acts.length > 1) avTimer = setInterval(next, 4000);
+}
+function playAct(n, ms = 4000) { stopAvatar(); setAct(n); boostT = setTimeout(startAvatar, ms); }
+function reactTo(reply) {
+  if (!state.animations) return;
+  const m = [...reply.matchAll(/\*([^*]+)\*/g)].map(x => x[1]).join(' ');
+  const a = detectActs(m); if (a.length) playAct(a[0]);
+}
+
+/* ---------- Chat view ---------- */
+function animClass() {
+  if (!state.animations) return '';
+  const a = state.actions.toLowerCase();
+  if (/danc|robot|groove/.test(a)) return 'anim-dance';
+  if (/drunk|wobbl|dizzy|stumbl/.test(a)) return 'anim-wobble';
+  if (/jump|bounce|hop|energ/.test(a)) return 'anim-bounce';
+  if (/spin|twirl|whirl/.test(a)) return 'anim-spin';
+  return 'anim-float';
+}
+function tags() {
+  const t = [persona(), ...state.actions.split(/[,;\n]+/).map(s => s.trim()).filter(Boolean).slice(0, 4)];
+  t.push(state.animations ? 'animated' : 'still');
+  return t;
+}
+function addMsg(who, text) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + who;
+  d.innerHTML = esc(text).replace(/\*([^*]+)\*/g, '<em>*$1*</em>');
+  const log = $('#log'); log.appendChild(d); log.scrollTop = log.scrollHeight;
+  return d;
+}
+
+function renderChat(first) {
+  stopAvatar();
+  const face = FACES[state.personality] && !state.custom ? FACES[state.personality] : '🤖';
+  stage.innerHTML = `
+    <div class="fade w-full flex flex-col gap-4">
+      <section class="glass p-5 flex items-center gap-5">
+        ${state.animations ? bodyAvatar(face) : `<div id="av" class="orb-wrap" style="transform:scale(.7);margin:-20px"><div class="orb">${face}</div></div>`}
+        <div class="min-w-0 flex-1">
+          <div class="flex items-center gap-3 flex-wrap">
+            <h2 class="text-2xl font-bold">${esc(state.name)}</h2>
+            <span id="status" class="text-sm flex items-center gap-2" style="color:var(--cyan)"><span class="inline-block w-2 h-2 rounded-full" style="background:var(--cyan)"></span><span id="stxt">Online</span></span>
+          </div>
+          <div class="flex flex-wrap gap-2 mt-2">${tags().map(t => `<span class="text-xs px-3 py-1 rounded-full" style="border:1px solid var(--line);color:var(--mute)">${esc(t)}</span>`).join('')}</div>
+        </div>
+      </section>
+      <section class="glass p-4 flex flex-col gap-3">
+        <div id="log" class="flex flex-col gap-3 overflow-y-auto pr-1" style="height:min(48vh,420px)"></div>
+        <div id="err" class="text-sm hidden" style="color:var(--pink)"></div>
+        ${state.animations && detectActs(state.actions).length ? `<div class="flex flex-wrap items-center gap-2"><span class="text-sm" style="color:var(--mute)">Make it:</span>${detectActs(state.actions).map(a => `<button class="chip text-sm" data-a="${a}">${ACT_LABEL[a]}</button>`).join('')}</div>` : ''}
+        <div class="flex gap-2">
+          <input id="msg" class="field" placeholder="Say something to ${esc(state.name)}…" autocomplete="off">
+          <button id="send" class="btn" style="padding:.7rem 1.4rem">Send</button>
+        </div>
+      </section>
+      <button id="reset" class="ghost self-center text-sm">Build a new A.I</button>
+    </div>`;
+
+  const setStatus = (busy, txt) => {
+    $('#av').parentElement.classList.toggle('thinking', busy);
+    $('#stxt').textContent = txt;
+  };
+  const showErr = e => { const el = $('#err'); el.textContent = e ? e : ''; el.classList.toggle('hidden', !e); };
+
+  async function turn(text) {
+    showErr('');
+    const typing = document.createElement('div');
+    typing.className = 'msg ai dots'; typing.innerHTML = '<span></span><span></span><span></span>';
+    $('#log').appendChild(typing); $('#log').scrollTop = 1e6;
+    setStatus(true, 'Thinking…'); $('#send').disabled = true;
+    try {
+      const reply = await askAI(text);
+      state.history.push(...(text ? [{ role: 'user', content: text }] : []), { role: 'assistant', content: reply });
+      typing.remove(); addMsg('ai', reply); reactTo(reply);
+    } catch (e) {
+      typing.remove(); showErr('Something went wrong: ' + e.message);
+    }
+    setStatus(false, 'Online'); $('#send').disabled = false; $('#msg').focus();
+  }
+  const send = () => {
+    const v = $('#msg').value.trim(); if (!v) return;
+    $('#msg').value = ''; addMsg('me', v); turn(v);
+  };
+  $('#send').onclick = send;
+  $('#msg').onkeydown = e => { if (e.key === 'Enter') send(); };
+  $('#reset').onclick = () => { stopAvatar(); Object.assign(state, { step: 1, name: '', personality: '', custom: '', actions: '', animations: true, history: [] }); render(); };
+  document.querySelectorAll('[data-a]').forEach(b => b.onclick = () => playAct(b.dataset.a));
+  if (state.animations) startAvatar();
+  if (first) turn(null);
+}
+
+render();
+</script>
+</body>
+</html>
