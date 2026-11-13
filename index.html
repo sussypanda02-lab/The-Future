@@ -124,7 +124,7 @@ const MODELS = ['openrouter/free', 'openai/gpt-oss-20b:free', 'google/gemma-3-27
 const MAX_TOKENS = 500; // cap per reply (extra room for models that think before answering)
 
 const state = {
-  apiKey: OPENROUTER_API_KEY,
+  apiKey: OPENROUTER_API_KEY.trim(),
   step: 0, name: '', personality: '', custom: '', animations: true, actions: '',
   model: MODELS[0],
   history: []
@@ -265,6 +265,8 @@ async function askAI(userText) {
   const messages = [{ role: 'system', content: systemPrompt() }, ...state.history];
   if (userText) messages.push({ role: 'user', content: userText });
   else messages.push({ role: 'user', content: '(The user just finished creating you. Introduce yourself in character in 1-2 sentences.)' });
+  if (!state.apiKey || state.apiKey.includes('PASTE_YOUR')) throw new Error('No API key set. Paste your OpenRouter key into OPENROUTER_API_KEY at the top of the script.');
+  if (!state.apiKey.startsWith('sk-or-')) throw new Error('That does not look like an OpenRouter key. Real keys start with sk-or-v1-. Copy the key itself (shown once when created), not its name.');
   const live = await loadFreeModels();
   const order = [...new Set([state.model, ...live, ...MODELS])].slice(0, 8);
   const errs = [];
@@ -279,7 +281,7 @@ async function askAI(userText) {
       if (!res.ok) {
         const msg = data?.error?.message || ('Request failed (' + res.status + ')');
         errs.push(model + ': ' + msg);
-        if (res.status === 401 || res.status === 500) break;
+        if (res.status === 401 || res.status === 500) { errs.push('Your key was rejected by OpenRouter. It was probably deleted, revoked, or copied wrong. Make a new one at openrouter.ai/settings/keys.'); break; }
         continue;
       }
       const text = data.choices?.[0]?.message?.content?.trim();
