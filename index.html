@@ -172,7 +172,7 @@ const STEPS = [
     ok: () => true, bind() { $('#tg').onclick = () => { state.animations = !state.animations; render(); }; } },
   { q: 'What actions do you want?', body: () => `
       <div class="flex flex-wrap gap-2 mb-4">${QUICK.map(q => `<button class="chip text-sm ${state.actions.toLowerCase().includes(q.toLowerCase()) ? 'on' : ''}" data-q="${q}">${q}</button>`).join('')}</div>
-      <textarea id="act" class="field" rows="4" placeholder="e.g. dancing robotically, drunk preppy poop, spinning when excited">${esc(state.actions)}</textarea>
+      <textarea id="act" class="field" rows="4" placeholder="Type your action! (More Coming Out Soon!)">${esc(state.actions)}</textarea>
       <p class="mt-2 text-sm" style="color:var(--mute)">Tap some, or type your own, separated by commas. The character acts out the ones it recognizes, and the AI will use them in its replies.</p>`,
     ok: () => state.actions.trim().length > 0, bind() {
       const ta = $('#act');
@@ -306,7 +306,7 @@ const ACT_RX = { wave: /wave|hello|greet/, dance: /danc|groove|boogie|twerk/, ro
   spin: /spin|twirl|whirl|pirouette/, drunk: /drunk|wobbl|stumbl|dizzy|tipsy|trip/, clap: /clap|applaud/, run: /\brun|sprint|dash|zoom/,
   sleep: /sleep|nap|yawn|snooze/, cheer: /cheer|celebrat|hooray|party/, poop: /poop|crap|squat/, love: /love|heart|blush|kiss/ };
 const ACT_LABEL = { wave: 'Wave', dance: 'Dance', robot: 'Robot', jump: 'Jump', spin: 'Spin', drunk: 'Wobble', clap: 'Clap', run: 'Run', sleep: 'Nap', cheer: 'Cheer', poop: 'Poop', love: 'Kiss' };
-const QUICK = ['Waving', 'Dancing', 'Robot dance', 'Jumping', 'Spinning', 'Drunk wobble', 'Clapping', 'Running', 'Napping', 'Cheering', 'Pooping', 'Blowing kisses'];
+const QUICK = ['Waving', 'Dancing', 'Robot dance', 'Jumping', 'Spinning', 'Wobble', 'Clapping', 'Running', 'Napping', 'Cheering', 'Pooping', 'Blowing kisses'];
 const FX = { poop: '💩', sleep: '💤', dance: '🎵', cheer: '🎉', love: '❤️', run: '💨', spin: '✨', drunk: '🥴', robot: '⚙️' };
 const detectActs = t => { t = t.toLowerCase(); return Object.keys(ACT_RX).filter(k => ACT_RX[k].test(t)); };
 let avTimer, boostT, fxT;
